@@ -266,20 +266,46 @@ export default function Home() {
     setMessageForm((current) => ({ ...current, [name]: value }));
   };
 
-  const submitLead = (event: FormEvent<HTMLFormElement>) => {
+  const submitLead = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    toast.success("Offer request captured for the demo", {
-      description:
-        "For production, connect this form to the CRM or lead inbox you want JNK to use.",
-    });
+    try {
+      const res = await fetch(`https://formspree.io/f/${import.meta.env.VITE_FORMSPREE_LEAD_ID}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ ...leadForm, _subject: "New Offer Request – JNK Managing Group" }),
+      });
+      if (res.ok) {
+        toast.success("Got it! We'll be in touch shortly.", {
+          description: "Jeff will reach out within one business day.",
+        });
+        setLeadForm({ address: "", name: "", phone: "", email: "" });
+      } else {
+        toast.error("Something went wrong. Please call us at 801-647-8799.");
+      }
+    } catch {
+      toast.error("Something went wrong. Please call us at 801-647-8799.");
+    }
   };
 
-  const submitMessage = (event: FormEvent<HTMLFormElement>) => {
+  const submitMessage = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    toast.success("Message ready to route", {
-      description:
-        "This static preview confirms the interaction. A production build should connect the form to email or CRM automation.",
-    });
+    try {
+      const res = await fetch(`https://formspree.io/f/${import.meta.env.VITE_FORMSPREE_MESSAGE_ID}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ ...messageForm, _subject: "New Message – JNK Managing Group" }),
+      });
+      if (res.ok) {
+        toast.success("Message sent!", {
+          description: "We'll get back to you within one business day.",
+        });
+        setMessageForm({ firstName: "", lastName: "", phone: "", email: "", message: "" });
+      } else {
+        toast.error("Something went wrong. Please call us at 801-647-8799.");
+      }
+    } catch {
+      toast.error("Something went wrong. Please call us at 801-647-8799.");
+    }
   };
 
   const scrollToForm = () => {
@@ -416,7 +442,7 @@ export default function Home() {
                   Get My Offer Options <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
                 <p className="mt-4 flex items-center gap-2 text-xs font-semibold text-navy/58">
-                  <ShieldCheck className="h-4 w-4 text-sage-dark" /> Privacy-first demo form. Connect to CRM in production.
+                  <ShieldCheck className="h-4 w-4 text-sage-dark" /> Your information is used only to prepare your offer options. We don't share it.
                 </p>
               </form>
             </div>
@@ -429,7 +455,7 @@ export default function Home() {
               <p className="section-kicker">Why homeowners reach out</p>
               <h2 className="section-heading mt-4">Selling is not one-size-fits-all.</h2>
               <p className="mt-6 text-lg leading-8 text-navy/70">
-                The rebuild should make JNK’s biggest differentiator clear: sellers are not forced into one narrow path. The page should translate uncertainty into calm, comparable options.
+                Most homeowners come to us with a deadline, a repair list, or a move that didn’t go as planned. Whatever brought you here, you deserve to see every option side by side — not just the one that’s fastest for the buyer.
               </p>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
@@ -449,7 +475,7 @@ export default function Home() {
               <p className="section-kicker">Selling options tailored to your needs</p>
               <h2 className="section-heading mt-4">Six paths. One consultative decision.</h2>
               <p className="mt-6 text-lg leading-8 text-navy/68">
-                Each option card should answer three questions quickly: what it is, who it helps, and why a homeowner should consider it.
+                Whether you're facing an estate sale, a relocation, a tight timeline, or just want to explore your options — there's a path here that fits. We walk you through each one so the decision is always yours.
               </p>
             </div>
             <div className="mt-12 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
@@ -513,7 +539,7 @@ export default function Home() {
               <p className="section-kicker">Proof of work</p>
               <h2 className="section-heading mt-4">JNK does not just buy homes. It restores potential.</h2>
               <p className="mt-6 text-lg leading-8 text-navy/70">
-                The current website’s before-and-after concept should remain prominent. The rebuilt page should use it as proof that JNK understands property condition, renovation value, and market presentation.
+                Before-and-after results aren’t just visual proof — they show how well we understand what a property can become. When renovation makes financial sense, we help sellers capture that value rather than leaving it on the table.
               </p>
               <div className="mt-8 grid gap-4 sm:grid-cols-3">
                 {[
@@ -540,9 +566,9 @@ export default function Home() {
             <div className="grid gap-8 lg:grid-cols-[0.75fr_1.25fr] lg:items-start">
               <div>
                 <p className="section-kicker">Trust signals</p>
-                <h2 className="section-heading mt-4">Make credibility visible before the form.</h2>
+                <h2 className="section-heading mt-4">What sellers say about working with JNK.</h2>
                 <p className="mt-6 text-lg leading-8 text-navy/68">
-                  Real estate landing pages ask for sensitive property details. The design should visibly reduce perceived risk through transparent language, responsive contact options, and credible local proof.
+                  We know sharing property details feels like a big step. Every conversation starts with listening — no pressure, no obligation, and no unsolicited follow-up beyond what you ask for.
                 </p>
               </div>
               <div className="grid gap-5 md:grid-cols-3">
@@ -567,7 +593,7 @@ export default function Home() {
               <p className="section-kicker">Questions sellers ask</p>
               <h2 className="section-heading mt-4">Answer objections before they become hesitation.</h2>
               <p className="mt-6 text-lg leading-8 text-navy/68">
-                FAQs should be specific to seller anxiety: repairs, speed, fees, privacy, and whether JNK will recommend the right path rather than only the fastest one.
+                The questions we hear most often from sellers — answered honestly, without the runaround.
               </p>
             </div>
             <div className="space-y-4">
